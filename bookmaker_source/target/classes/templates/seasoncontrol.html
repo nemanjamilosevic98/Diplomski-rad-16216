@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Season Control</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+        <!--        <link href="/webjars/bootstrap/4.3.1/css/bootstrap.css" rel="stylesheet" />
+                <script type="text/javascript" src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+                <script type="text/javascript" src="/webjars/jquery/3.4.1/jquery.min.js"></script>-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">VirtualFeed</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav mr-auto">
+
+                    <a class="nav-item nav-link" href="/">Home</a>
+                    <a class="nav-item nav-link" href="/bookmaker/">Bookmakers</a>
+                    <a class="nav-item nav-link" href="/operator/">Operators</a>
+                    <a class="nav-item nav-link" href="/sport/">Sports</a>
+                    <a class="nav-item nav-link" href="/league/">Leagues</a>
+                    <a class="nav-item nav-link" href="/team/">Teams</a>
+                    <a class="nav-item nav-link" href="/seasoncontrol/" style="color: rgb(255,255,255)">Season Control</a>
+
+                </div>
+                <ul class="navbar-nav ml-auto">
+                    <a class="nav-item nav-link" href="/index" th:href="@{http://localhost:8081/logout}" >Log out</a>
+                </ul>
+            </div>
+        </nav>
+        <div class="mt-5" align="center">
+            <a href="/seasoncontrol/pauseallseasons" class="btn btn-danger">Stop All Seasons</a>
+        </div>
+        <div class="mt-5 d-flex justify-content-center">
+
+            <table style="width:30%;" class="table table-bordered table-striped mr-5">
+                <tr class="thead-dark">
+                    <th colspan="2" style="text-align:center;">Start Season</th>
+                </tr>
+                <th:block th:each="league : ${notActiveLeagues}">
+                    <tr th:with="id=${league.leagueId}">
+                        <td th:text="${league.leagueName}" ></td>
+                        <td>
+                            <form th:action="@{'/seasoncontrol/addseason/{leagueId}'(leagueId=${id})}" th:object="${addedSeason}" method="post">
+                            <input type="text" placeholder="Season name" th:field="*{name}" required="required"/>
+                            <button type="submit" class="btn btn-success btn-lg">Start</button>
+                            </form>
+
+                        </td>
+                    </tr>
+                </th:block>
+            </table>
+
+            <table style="width:30%;" class="table table-bordered table-striped mr-5">
+                <tr class="thead-dark">
+                    <th colspan="4" style="text-align:center;">Stop Season</th>
+                </tr>
+                <th:block th:each="league : ${activeLeagues}">
+                    <tr th:with="id=${league.seasonId}">
+                        <td th:text="${league.leagueName}"></td>
+                        <td th:text="${league.seasonName}"></td>
+                        <td>
+                            <form th:action="@{'/seasoncontrol/pauseseason/{seasonId}'(seasonId=${id})}" method="get">
+                                <button type="submit" class="btn btn-warning btn-lg">Stop</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form th:action="@{'/seasoncontrol/resumeseason/{seasonId}'(seasonId=${id})}" method="get">
+                                <button type="submit" class="btn btn-success btn-lg">Resume</button>
+                            </form>
+                        </td>
+                    </tr>
+                </th:block>
+            </table>
+        </div>
+    </body>
+</html>

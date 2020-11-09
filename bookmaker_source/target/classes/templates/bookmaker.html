@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="ISO-8859-1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+        <title>Bookmakers</title>
+    </head>
+    <body>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">VirtualFeed</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav mr-auto">
+
+                    <a class="nav-item nav-link" href="/">Home</a>
+                    <a class="nav-item nav-link" href="/bookmaker/" style="color: rgb(255,255,255)">Bookmakers</a>
+                    <a class="nav-item nav-link" href="/operator/">Operators</a>
+                    <a class="nav-item nav-link" href="/sport/">Sports</a>
+                    <a class="nav-item nav-link" href="/league/">Leagues</a>
+                    <a class="nav-item nav-link" href="/team/">Teams</a>
+                    <a class="nav-item nav-link" href="/seasoncontrol/">Season Control</a>
+
+                </div>
+                <ul class="navbar-nav ml-auto">
+                    <a class="nav-item nav-link" href="/index" th:href="@{http://localhost:8081/logout}" >Log out</a>
+                </ul>
+            </div>
+        </nav>
+        <div align="center">
+            <table border="3" class="table" style="margin-top:20px">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Id</th>
+                        <th>UserName</th>
+                        <th>Password</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Edit</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <th:block th:each="bookmaker : ${bookmakers}">
+                    <tr>
+                        <td th:text="${bookmaker.id}"></td>
+                        <td th:text="${bookmaker.username}"></td>
+                        <td th:text="${bookmaker.password}"></td>
+                        <td th:text="${bookmaker.firstName}"></td>
+                        <td th:text="${bookmaker.lastName}"></td>
+                        <td th:text="${bookmaker.email}"></td>
+                        <td th:text="${bookmaker.phone}"></td>
+                        <td>
+                            <button
+                                th:data-username="${bookmaker.username}"
+                                th:data-password="${bookmaker.password}"
+                                th:data-firstName="${bookmaker.firstName}"
+                                th:data-lastName="${bookmaker.lastName}"
+                                th:data-email="${bookmaker.email}"
+                                th:data-phone="${bookmaker.phone}"
+                                th:onclick="|editBookmaker('${bookmaker.id}')|"
+                                name="btnEditBookmaker"
+                                type="button"
+                                class="btn btn-warning"
+                                data-toggle="modal"
+                                data-target="#editModal"
+                                data_-whatever="@mdo"
+                                >
+                                Edit
+                            </button>
+                        </td>
+                        <td th:with="deleteId=${bookmaker.id}">
+                            <a th:href="@{'/bookmaker/deletebookmaker/' + ${deleteId}}" class="btn btn-danger">Delete</a>
+                        </td>
+
+                    </tr>
+                </th:block>
+            </table>
+        </div>
+        <div class="text-center">
+            <button type="button" class="btn btn-primary mx-auto" data-toggle="modal" data-target="#addModal" data-whatever="@mdo">Add Bookmaker</button>
+        </div>
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">New Bookmaker</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/bookmaker/addbookmaker}" th:object="${addedBookmaker}" method="post">
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">UserName</label>
+                                <div class="col-sm-10">
+                                    <input type="text" th:field="*{username}" required = "required" minlength="5" placeholder="UserName"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Password</label>
+                                <div class="col-sm-10">
+                                    <input type="text" th:field="*{password}" required = "required" minlength="5" placeholder="Password"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">First Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" th:field="*{firstName}" required = "required" pattern="[A-Za-z]*" placeholder="First Name"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Last Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" th:field="*{lastName}" required = "required" pattern="[A-Za-z]*" placeholder="Last Name"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Email</label>
+                                <div class="col-sm-10">
+                                    <input type="email" th:field="*{email}" required = "required" placeholder="Email"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Phone Number</label>
+                                <div class="col-sm-10">
+                                    <input type="text" th:field="*{phone}" required = "required" pattern="06[0-9]/[0-9]{3}-[0-9]{2}-[0-9]{2}" placeholder="06*/***-**-**"/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-success" value="Add bookmaker"/>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel1">Edit Bookmaker</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/bookmaker/updatebookmaker}" th:object="${updatedBookmaker}" method="post">
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Id</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control form-control-sm" id="updateId" th:field="*{id}" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">UserName</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="updateUsername" class="form-control form-control-sm" th:field="*{username}" required = "required" minlength="5" placeholder="UserName"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Password</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="updatePassword" class="form-control form-control-sm" th:field="*{password}" required = "required" minlength="5" placeholder="Password"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">First Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="updateFirstName" class="form-control form-control-sm" th:field="*{firstName}" required = "required" pattern="[A-Za-z]*" placeholder="First Name"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Last Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="updateLastName" class="form-control form-control-sm" th:field="*{lastName}" required = "required" pattern="[A-Za-z]*" placeholder="Last Name"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Email</label>
+                                <div class="col-sm-10">
+                                    <input type="email" id="updateEmail" class="form-control form-control-sm" th:field="*{email}" required = "required" placeholder="Email"/>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Phone Number</label>
+                                <div class="col-sm-10">
+                                    <input type="text" id="updatePhone" class="form-control form-control-sm" th:field="*{phone}" required = "required" pattern="06[0-9]/[0-9]{3}-[0-9]{2}-[0-9]{2}" placeholder="06*/***-**-**"/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-success" value="Edit Bookmaker"/>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function editBookmaker(id) {
+                document.getElementById('updateId').value = id;
+                document.getElementById('updateUsername').value = event.target.dataset.username;
+                document.getElementById('updatePassword').value = event.target.dataset.password;
+                document.getElementById('updateFirstName').value = event.target.dataset.firstname;
+                document.getElementById('updateLastName').value = event.target.dataset.lastname;
+                document.getElementById('updateEmail').value = event.target.dataset.email;
+                document.getElementById('updatePhone').value = event.target.dataset.phone;
+            }
+        </script>
+    </body>
+</html>

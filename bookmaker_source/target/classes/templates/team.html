@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Team form</title>
+
+
+        <!--        <link href="/webjars/bootstrap/4.3.1/css/bootstrap.css" rel="stylesheet" />
+                <script type="text/javascript" src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+                <script type="text/javascript" src="/webjars/jquery/3.4.1/jquery.min.js"></script>-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    </head>
+    <body >
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">VirtualFeed</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav mr-auto">
+
+                    <a class="nav-item nav-link" href="/">Home</a>
+                    <a class="nav-item nav-link" href="/bookmaker/">Bookmakers</a>
+                    <a class="nav-item nav-link" href="/operator/">Operators</a>
+                    <a class="nav-item nav-link" href="/sport/">Sports</a>
+                    <a class="nav-item nav-link" href="/league/">Leagues</a>
+                    <a class="nav-item nav-link" href="/team/" style="color: rgb(255,255,255)">Teams</a>
+                    <a class="nav-item nav-link" href="/seasoncontrol/">Season Control</a>
+
+                </div>
+                <ul class="navbar-nav ml-auto">
+                    <a class="nav-item nav-link" href="/index" th:href="@{http://localhost:8081/logout}" >Log out</a>
+                </ul>
+            </div>
+        </nav>
+
+
+        <!--        <h1 align="center">TEAMS</h1>-->
+
+        <div  style="margin-top: 2rem;" align="center">
+
+
+            <table style="width:60%;" class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <td>ID</td>
+                        <td>Name</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="team : ${teams}">
+                        <td th:text="${team.id}"></td>
+                        <td th:text="${team.name}"></td>
+                        <td style="width: 10rem" th:with="deleteId=${team.id}">
+                            <form th:action="@{'/team/deleteTeam/{id}'(id=${deleteId})}"  th:method="delete">
+                                <button  type="submit" class="btn btn-danger">Delete team</button>
+                            </form>
+                        </td>
+                        <td style="width: 10rem">
+                            <button allign="center" th:data-name="${team.name}" th:data-attackHome="${team.attackHome}"
+                                    th:data-attackAway="${team.attackAway}" th:data-defenseHome="${team.defenseHome}"
+                                    th:data-defenseAway="${team.defenseAway}" th:data-leagueId="${team.leagueId}"
+                                    th:data-teamId="${team.id}"
+                                    name="btnEditSport"  th:onclick="|dataToModal('${team.id}')|" type="button" class="btn btn-primary"
+                                    data-toggle="modal" data-target="#editModal" data_-whatever="@mdo">Edit</button></td>
+
+                    </tr>
+                </tbody>
+            </table>
+
+            <button style="margin-top: 1rem; padding-left: 2rem; padding-right: 2rem" type="button" class="btn btn-success"
+                    data-toggle="modal" data-target="#addOperator">Add Team</button>
+        </div>
+
+
+        <div class="modal fade" id="addOperator" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add Team</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/team/addTeam}" th:object="${addedTeam}" method="post" >
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Team name</span>
+                                </div>
+                                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                       th:field="*{name}" required="required">
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">League</span>
+                                </div>
+                                <select class="browser-default custom-select" th:field="*{leagueId}" required="required">
+                                    <option th:each="league : ${leagues}" th:value="${league.id}" th:text="${league.name}" ></option>
+
+                                </select>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Attack home</span>
+                                </div>
+                                <input type="number" min='0' required="required" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                       th:field="*{attackHome}" >
+                            </div><div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Attack away</span>
+                                </div>
+                                <input type="number" min='0' required="required" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                       th:field="*{attackAway}">
+                            </div><div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Defense home</span>
+                                </div>
+                                <input type="number" min='0' required="required" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                       th:field="*{defenseHome}">
+                            </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Defense away</span>
+                                </div>
+                                <input type="number" min='0' required="required" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                       th:field="*{defenseAway}">
+                            </div>
+                            <button type="submit" class="btn btn-success">ADD TEAM</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalHeader">Edit Team</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+
+
+                        <form th:action="@{/team/updateTeam}" th:object="${updatedTeam}" method="put">
+
+                            <input type="text" hidden="true" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                   th:field="*{id}" id="updateTeamId">
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">Team name</span>
+                                    </div>
+                                    <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                           th:field="*{name}" id="updateTeamName" required="required">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">League</span>
+                                    </div>
+                                    <select class="browser-default custom-select" th:field="*{leagueId}" id="updateTeamLeague"required="required">
+                                        <option th:each="league : ${leagues}" th:value="${league.id}" th:text="${league.name}" ></option>
+
+                                    </select>
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">Attack home</span>
+                                    </div>
+                                    <input type="number" min='0' required="required" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                           th:field="*{attackHome}" id="updateTeamAttackHome">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">Attack away</span>
+                                    </div>
+                                    <input type="number" min='0' required="required" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                           th:field="*{attackAway}" id="updateTeamAttackAway">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">Defense home</span>
+                                    </div>
+                                    <input type="number" min='0' required="required" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                           th:field="*{defenseHome}" id="updateTeamDefenseHome">
+                                </div>
+                                <div class="input-group mb-3">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">Defense away</span>
+                                    </div>
+                                    <input type="number" min='0' required="required" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"
+                                           th:field="*{defenseAway}" id="updateTeamDefenseAway">
+                                </div>
+
+                                <input type="submit" class="btn btn-success" value="Edit team"/>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--        <script th:inline="javascript">
+                    /*<![CDATA[*/
+
+                    var message = /*[[${teams}]]*/ 'default';
+                    console.log(message);
+
+                    /*]]>*/
+                </script>-->
+
+        <script>
+            function dataToModal(id) {
+
+                document.getElementById('updateTeamId').value = event.target.dataset.teamid
+                document.getElementById('updateTeamName').value = event.target.dataset.name
+                document.getElementById('updateTeamAttackHome').value = event.target.dataset.attackhome
+                document.getElementById('updateTeamAttackAway').value = event.target.dataset.attackaway
+                document.getElementById('updateTeamDefenseHome').value = event.target.dataset.defensehome
+                document.getElementById('updateTeamDefenseAway').value = event.target.dataset.defenseaway
+                document.getElementById('updateTeamLeague').value = event.target.dataset.leagueid
+
+
+                console.log(event.target.dataset)
+
+            }
+        </script>
+    </body>
+</html>

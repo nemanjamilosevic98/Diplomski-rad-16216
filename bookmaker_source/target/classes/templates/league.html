@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+            <title th:text="${title}">Leagues</title>
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <a class="navbar-brand" href="#">VirtualFeed</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav mr-auto">
+
+                    <a class="nav-item nav-link" href="/">Home</a>
+                    <a class="nav-item nav-link" href="/bookmaker/">Bookmakers</a>
+                    <a class="nav-item nav-link" href="/operator/">Operators</a>
+                    <a class="nav-item nav-link" href="/sport/">Sports</a>
+                    <a class="nav-item nav-link" href="/league/" style="color: rgb(255,255,255)">Leagues</a>
+                    <a class="nav-item nav-link" href="/team/">Teams</a>
+                    <a class="nav-item nav-link" href="/seasoncontrol/">Season Control</a>
+
+                </div>
+                <ul class="navbar-nav ml-auto">
+                    <a class="nav-item nav-link" href="/index" th:href="@{http://localhost:8081/logout}" >Log out</a>
+                </ul>
+            </div>
+        </nav>
+        <div class="d-flex justify-content-center">
+            <form class="p-3" th:action="@{/league/}"  th:method="get">
+                <button  type="submit" class="btn btn-secondary mr-1">All Leagues</button>
+            </form>
+            <form class="p-3 form-inline my-2 my-lg-0">
+                <button type="button" class="btn btn-primary mr-1" data-toggle="modal" data-target="#addModal" data-whatever="@mdo">Add league</button>
+            </form>
+        </div>
+        <div align="center">
+            <table style="width:70%;" class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Sport</th>
+                        <th>Delete</th>
+                        <th>Edit</th>
+                    </tr>
+                </thead>
+                <th:block th:each="league : ${leagues}">
+                    <tr>
+                        <td th:text="${league.name}"></td>
+                        <td th:text="${league.sport.name}"></td>
+                        <td style="width: 10rem" th:with="deleteId=${league.id}">
+                            <form th:action="@{'/league/deleteLeague/{id}'(id=${deleteId})}"  th:method="delete">
+                                <button  type="submit" class="btn btn-danger">Delete league</button>
+                            </form>
+                        </td>
+                        <td class="text-center" style="width: 10rem">
+                            <button th:data-id="${league.id}" th:data-name="${league.name}" th:data-sport="${league.sport.code}"
+                                    name="btnEditLeague" th:onclick="|myFunction()|" type="button" class="btn btn-warning"
+                                    data-toggle="modal" data-target="#editModal" data_-whatever="@mdo">Edit league
+                            </button>
+                        </td>
+                    </tr>
+                </th:block>
+            </table>
+        </div>
+
+
+        <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">New league</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/league/addLeague}" th:object="${addedLeague}" method="post">
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control form-control-sm" id="colFormLabelSm" th:field="*{name}" required="required">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">League</label>
+                                <div class="col-sm-10">
+                                    <select th:field="*{sport}" class="form-control">
+                                        <option th:each="sport : ${sports}" th:value="${sport.code}" th:text="${sport.name}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-success" value="Add league"/>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Edit sport</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form th:action="@{/league/updateLeague}" th:object="${updatedLeague}" method="post">
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm" style="display:none">Id</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control form-control-sm" id="updateId" th:field="*{id}" style="display:none" readonly>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">Name</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control form-control-sm" id="updateName" th:field="*{name}" required="required">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="colFormLabelSm" class="col-sm-2 col-form-label col-form-label-sm">League</label>
+                                <div class="col-sm-10">
+                                    <select th:field="*{sport}" class="form-control" id="updateSport">
+                                        <option th:each="sport : ${sports}" th:value="${sport.code}" th:text="${sport.name}" ></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <input type="submit" class="btn btn-success" value="Edit league"/>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function myFunction() {
+                document.getElementById('updateId').value = event.target.dataset.id
+                document.getElementById('updateName').value = event.target.dataset.name
+                document.getElementById('updateSport').value = event.target.dataset.sport
+                console.log(event.target.dataset.sport);
+            }
+        </script>
+    </body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+            <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+            <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+            <title>VirtualFeed Login</title>
+
+    </head>
+    <body th:style="'background: url{[[@{https://images.pexels.com/photos/255379/pexels-photo-255379.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500}]]}} no-repeat center center fixe;'">
+        <script type="text/javascript">
+            $(window).on('load', function () {
+                $('#modalLogIn').modal('show');
+            });
+        </script>
+
+
+        <div class="modal fade" id="modalLogIn" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header alert alert-primary">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Please sign in</h5>
+                    </div>
+                    <div class="modal-body mt-3">
+                        <form class="form-signin" th:action="@{/login}" method="post">
+                            <p th:if="${param.error}" class="error">Invalid user, password, or domain</p>
+                            <p>
+                                <label for="username" class="sr-only">Username</label>
+                                <input type="text" id="username" name="username" class="form-control"
+                                       placeholder="Username" required autofocus/>
+                            </p>
+                            <p>
+                                <label for="password" class="sr-only">Password</label>
+                                <input type="password" id="password" name="password" class="form-control"
+                                       placeholder="Password" required autofocus/>
+                            </p>
+                            <button class="btn btn-lg btn-info btn-block" type="submit">Sign in</button><br/>
+                            <p><a href="/index" th:href="@{http://localhost:8081}" class="btn btn-light">Back to Home Page</a></p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
